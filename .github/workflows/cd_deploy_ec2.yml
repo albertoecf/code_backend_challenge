@@ -1,0 +1,48 @@
+name: Deploy on EC2
+
+on:
+  push:
+    branches:
+      - release
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      EC2_PUBLIC_IP: ${{ secrets.EC2_PUBLIC_IP }}
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Convert SSH Private Key to PEM
+        run: |
+          echo "$SSH_PRIVATE_KEY" > private_key_ssh.pem
+          chmod 600 private_key_ssh.pem
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add EC2 IP to Known Hosts
+        run: |
+          echo "Adding EC2 IP to known hosts..."
+          ssh-keyscan -H $EC2_PUBLIC_IP >> $HOME/.ssh/known_hosts
+
+      - name: SSH into EC2 Instance
+        run: |
+          echo "Connecting to the EC2 instance..."
+          ssh -i ./private_key_ssh.pem ubuntu@${EC2_PUBLIC_IP} << EOF
+            echo "Entering the project directory..."
+            cd /home/ubuntu/Documents/Helu/code_backend_challenge
+            echo "Pulling the latest changes from the 'release' branch..."
+            git pull origin release 
+            echo "Stopping and removing Docker containers..."
+            sudo docker-compose down
+            echo "Building and starting Docker containers..."
+            sudo docker-compose up --build -d
+          EOF

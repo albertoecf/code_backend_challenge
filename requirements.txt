@@ -1,0 +1,7 @@
+black
+fastapi==0.85.0
+isort
+pytest
+pytest-regressions
+requests
+uvicorn
