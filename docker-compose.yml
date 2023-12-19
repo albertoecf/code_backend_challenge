@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+  app:
+    build: .
+    command: ./start_app.py
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
