@@ -42,7 +42,7 @@ jobs:
             echo "Pulling the latest changes from the 'release' branch..."
             git pull origin release 
             echo "Stopping and removing Docker containers..."
-            sudo docker-compose down
+            sudo docker compose down
             echo "Building and starting Docker containers..."
-            sudo docker-compose up --build -d
+            sudo docker compose up --build -d
           EOF
