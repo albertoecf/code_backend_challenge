@@ -22,11 +22,9 @@ report_generator = GenerateReport(bookings_file_path, chart_of_accounts_file_pat
 def get_report_generator():
     return report_generator
 
-
 @app.get("/")
 def hello_handler():
     return {"msg": "Hello, World!"}
-
 
 @app.get(
     "/report",
@@ -68,6 +66,7 @@ def read_report():
     except Exception as e:
         # Handle other exceptions and return an error response
         raise HTTPException(status_code=500, detail=str(e))
+
 
 
 if __name__ == "__main__":
