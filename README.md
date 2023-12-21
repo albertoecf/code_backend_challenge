@@ -38,3 +38,42 @@ Please, do not include venv, pycache or any other not required folders and files
 
 ## Run tests
 `make test`  
+
+# Solution 
+
+## Video
+[Here](https://www.loom.com/share/70e2856b317e48e8a22561c8d592fd35?t=1&sid=5a9f33e8-8b01-4dc4-83c9-f5596ba59024)
+
+## Repo
+[Here](https://github.com/albertoecf/code_backend_challenge)
+
+
+## Model-View-Controller (MVC) Approach
+This project follows the Model-View-Controller (MVC) design pattern for structuring the application. The key components are as follows:
+
+- **Model (models.py):** Defines the data model using Pydantic. The `IncomeStatement` class represents the financial statement.
+
+- **View (main.py):** Implements the FastAPI application to expose endpoints for generating and downloading financial reports. The endpoint `/report` allows users to download the financial report in CSV format.
+
+- **Controller (controllers.py):** Contains the `GenerateReport` class responsible for processing raw data, generating financial reports, and comparing income statements.
+
+## Main Functionalities of Model and Controllers
+### Model (models.py):
+The `IncomeStatement` model has the following functionalities:
+
+- **from_dataframe(cls, df):** Creates an `IncomeStatement` object from a given DataFrame.
+
+### Controllers (controllers.py):
+The `GenerateReport` class provides the following main functionalities:
+
+- **generate_report(target_period):** Generates a financial report for the specified target period.
+
+- **compare_income_statements(statement_a, statement_b):** Compares two income statements and returns the comparison results.
+
+- **generate_and_save_report(new_period, old_period):** Generates and saves the financial report for new and old periods.
+
+
+## ⚠️ Pending Improvements
+Due to time constrain, the state of the current implementation, the output of `/report` is missing the comparison between June and May 2020 (%).
+
+
