@@ -141,3 +141,61 @@ class GenerateReport:
             "Absolute": round(absolute_difference, 2),
             "Percentage": round(percentage_difference, 1),
         }
+
+    def generate_and_save_report(self, new_period, old_period):
+        """
+        Generates and saves the financial report for new and old periods.
+
+        Args:
+            new_period (dict): Dictionary containing 'year' and 'month' for the new period.
+            old_period (dict): Dictionary containing 'year' and 'month' for the old period.
+
+        Returns:
+            str: The file path where the report is saved.
+        """
+        # Generate report for the new and old periods
+        new_period_income_statement = self.generate_report(new_period)
+        old_period_income_statement = self.generate_report(old_period)
+
+        # Compare both periods
+        comparison_results = self.compare_income_statements(
+            new_period_income_statement, old_period_income_statement
+        )
+
+        # Construct the final report DataFrame
+        final_report = pd.DataFrame(
+            {
+                "Month": ["June, 2020", "May, 2020", "June vs May, 2020 (Abs)"],
+                "Revenues": [
+                    new_period_income_statement.revenue,
+                    old_period_income_statement.revenue,
+                    comparison_results["Revenues"]["Absolute"],
+                ],
+                "Expenses": [
+                    new_period_income_statement.expense,
+                    old_period_income_statement.expense,
+                    comparison_results["Expenses"]["Absolute"],
+                ],
+                "Profits": [
+                    new_period_income_statement.profit,
+                    old_period_income_statement.profit,
+                    comparison_results["Profits"]["Absolute"],
+                ],
+                "Margins": [
+                    f"{new_period_income_statement.margin}%",
+                    f"{old_period_income_statement.margin}%",
+                    f"{comparison_results['Margins']['Absolute']} p.p.",
+                ],
+            }
+        )
+
+        # Transpose the final report
+        transposed_report = final_report.T.rename(columns=final_report.T.iloc[0]).iloc[
+            1:
+        ]
+
+        # Save the transposed report to a CSV file with index
+        output_file_path = "final_report_transposed.csv"
+        transposed_report.to_csv(output_file_path, index=True)
+
+        return output_file_path
