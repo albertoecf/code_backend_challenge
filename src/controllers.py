@@ -1,6 +1,5 @@
 import pandas as pd
-from models import IncomeStatement
-import json
+from src.models import IncomeStatement
 
 
 class GenerateReport:
