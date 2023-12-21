@@ -28,8 +28,20 @@ def read_report():
         old_period_income_statement = report_generator.generate_report(old_period)
 
         # Return the IncomeStatement as JSON
-        #todo: comparre both periods
-        return JSONResponse(content=new_period_income_statement.dict())
+        # todo: comparre both periods
+        comparison_results = report_generator.compare_income_statements(
+            new_period_income_statement, old_period_income_statement
+        )
+
+        # Return the comparison results as JSON
+        return JSONResponse(
+            content=[
+                new_period_income_statement.dict(),
+                old_period_income_statement.dict(),
+                comparison_results,
+            ]
+        )
+        # return JSONResponse(content=new_period_income_statement.dict())
 
     except ValueError as ve:
         # Handle validation errors and return an error response

@@ -41,7 +41,7 @@ class GenerateReport:
         month = target_period.get("month")
 
         if not isinstance(year, int) or not (1900 <= year <= 2100):
-            #we could get min and max year from existing df
+            # we could get min and max year from existing df
             raise ValueError("Invalid year. Please provide a 4-digit integer.")
 
         if not isinstance(month, int) or not (1 <= month <= 12):
@@ -99,3 +99,45 @@ class GenerateReport:
             .reset_index()
         )
         return grouped_df
+
+    def compare_income_statements(self, statement_a, statement_b):
+        """
+        Compares two income statements and returns the comparison results.
+
+        Args:
+            statement_a (IncomeStatement): The first income statement.
+            statement_b (IncomeStatement): The second income statement.
+
+        Returns:
+            dict: A dictionary containing the comparison results.
+        """
+        # Calculate absolute and percentage differences for each metric
+        comparison_results = {
+            "Revenues": self._compare_metrics(statement_a.revenue, statement_b.revenue),
+            "Expenses": self._compare_metrics(statement_a.expense, statement_b.expense),
+            "Profits": self._compare_metrics(statement_a.profit, statement_b.profit),
+            "Margins": self._compare_metrics(statement_a.margin, statement_b.margin),
+        }
+
+        return comparison_results
+
+    def _compare_metrics(self, metric_a, metric_b):
+        """
+        Compares two metrics and returns the comparison results.
+
+        Args:
+            metric_a (float): The first metric.
+            metric_b (float): The second metric.
+
+        Returns:
+            dict: A dictionary containing the absolute and percentage differences.
+        """
+        absolute_difference = metric_a - metric_b
+        percentage_difference = (
+            absolute_difference / abs(metric_b) * 100 if abs(metric_b) != 0 else 0
+        )
+
+        return {
+            "Absolute": round(absolute_difference, 2),
+            "Percentage": round(percentage_difference, 1),
+        }
