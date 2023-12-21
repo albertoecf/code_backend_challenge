@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from src.controllers import GenerateReport
 from src.app_config import result_file_path, bookings_file_path, chart_of_accounts_file_path
 from fastapi.responses import JSONResponse
+from fastapi.responses import FileResponse
 
 app = FastAPI()
 
@@ -33,16 +34,25 @@ def read_report():
         comparison_results = report_generator.compare_income_statements(
             new_period_income_statement, old_period_income_statement
         )
+        # Construct the final report dictionary
+        final_report = {
+            "June, 2020": new_period_income_statement.dict(),
+            "May, 2020": old_period_income_statement.dict(),
+            "June vs May, 2020 (Abs)": comparison_results,
+        }
 
-        # Return the comparison results as JSON
-        return JSONResponse(
-            content=[
-                new_period_income_statement.dict(),
-                old_period_income_statement.dict(),
-                comparison_results,
-            ]
+        # Save the final report to a JSON file
+        import json
+        output_file_path = "final_report.json"
+        with open(output_file_path, "w") as output_file:
+            json.dump(final_report, output_file)
+
+        # Return the final report file as a downloadable response
+        return FileResponse(
+            output_file_path,
+            media_type="application/json",
+            filename="final_report.json",
         )
-        # return JSONResponse(content=new_period_income_statement.dict())
 
     except ValueError as ve:
         # Handle validation errors and return an error response
