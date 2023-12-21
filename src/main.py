@@ -1,7 +1,8 @@
-# main.py
+import os
+import uvicorn
 from fastapi import FastAPI
-from controllers import GenerateReport
-from app_config import result_file_path, bookings_file_path, chart_of_accounts_file_path
+from src.controllers import GenerateReport
+from src.app_config import result_file_path, bookings_file_path, chart_of_accounts_file_path
 from fastapi.responses import JSONResponse
 
 app = FastAPI()
@@ -51,9 +52,11 @@ def read_report():
         return JSONResponse(content={"error": str(e)}, status_code=500)
 
 
-# todo delete, only for development conveniance
 if __name__ == "__main__":
-    import uvicorn
-
-    # Run the application using Uvicorn with --reload option
-    uvicorn.run("main:app", host="127.0.0.1", port=8001, reload=True)
+    uvicorn.run(
+        "src.main:app",
+        host=os.getenv("APP_HOST", "0.0.0.0"),
+        port=int(os.getenv("APP_PORT", 8000)),
+        workers=int(os.getenv("APP_WORKERS", 1)),
+        reload=True,
+    )

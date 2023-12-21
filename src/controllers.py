@@ -1,5 +1,5 @@
 import pandas as pd
-from models import IncomeStatement
+from src.models import IncomeStatement
 
 
 class GenerateReport:
